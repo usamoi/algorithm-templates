@@ -1,3 +1,7 @@
+// author  : menci (modified)
+// source  : https://oi.men.ci/suffix-array-notes/
+// license : CC BY-NC-SA 4.0
+
 #include <algorithm>
 #include <cstring>
 #include <iostream>
