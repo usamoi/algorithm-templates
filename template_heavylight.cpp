@@ -47,15 +47,13 @@ namespace Healight {
         return x->depth < y->depth ? x : y;
     }
 
-    Node* make(int n){
-        return new Node[1 + n];
-    }
+    typedef std::vector<Node> Healight;
 } // namespace Healight
 
 int main() {
     int N, M, S, x, y;
     std::cin >> N >> M >> S;
-    auto healight = Healight::make(N);
+    auto healight = Healight::Healight(1 + N);
     for (int i = 1; i < N; i++) {
         std::cin >> x >> y;
         healight[x].v.push_back(&healight[y]);

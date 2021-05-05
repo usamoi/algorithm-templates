@@ -7,7 +7,6 @@
 
 struct Bellman {
     typedef long long ll;
-    static const int MAXM = 15000 << 1, MAXN = 400;
     static const ll INF = 1LL << 32;
     struct Edge {
         int u, v;
@@ -22,8 +21,8 @@ struct Bellman {
     std::vector<Vertex> V;
     std::vector<Edge> E;
     int n;
-    void initial(int nn) {
-        n = nn;
+    void initial(int tn) {
+        n = tn;
         V.clear(), V.resize(1 + n);
         E.clear();
     }
@@ -67,4 +66,4 @@ struct Bellman {
             flow += limit;
         }
     }
-} g;
+};

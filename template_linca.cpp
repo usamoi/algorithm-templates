@@ -4,7 +4,7 @@
 
 namespace Linca {
     struct Node {
-        Node *fa = 0, *ch[2] = {}, *pathparent = 0;
+        Node *fa = nullptr, *ch[2] = {}, *pathparent = nullptr;
         char rev = 0;
         int value, data = 0;
 
@@ -151,22 +151,16 @@ namespace Linca {
         u->expose();
         v->pathparent = 0;
     }
-    std::vector<Node> make(int n) {
-        std::vector<Node> r;
-        r.reserve(1 + n);
-        r.push_back(Node(0));
-        return r;
-    }
-
+    typedef std::vector<Node> Linca;
 }; // namespace Linca
 
 int main() {
     int n, m;
     std::cin >> n >> m;
-    auto linca = Linca::make(n);
+    auto linca = Linca::Linca(1 + n);
     for (int i = 1, val; i <= n; i++) {
         std::cin >> val;
-        linca.push_back(Linca::Node(val));
+        linca[i] = Linca::Node(val);
     }
     while (m--) {
         int op, x, y;

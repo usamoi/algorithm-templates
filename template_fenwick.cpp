@@ -4,15 +4,16 @@
 
 struct Fenwick {
     typedef long long ll;
+    
     static int lowbit(int x) {
         return x & -x;
     }
 
-    Fenwick(int n) {
-        C.resize(1 + n, 0);
+    void initial(int n) {
+        C = std::vector<ll>(1 + n, 0);
     }
 
-    std::vector<int> C;
+    std::vector<ll> C;
     ll query(int x) {
         ll ret = 0;
         while (x > 0) {

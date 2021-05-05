@@ -2,8 +2,8 @@
 #include <string>
 #include <vector>
 
-template <typename String = std::string>
-void getNext(const String &T, std::vector<int> &next) {
+template <typename string = std::string>
+void getNext(const string &T, std::vector<int> &next) {
     next = std::vector<int>(T.size() + 1, 0);
 
     for (int i = 1, j = 0; i < T.size(); i++) {
@@ -14,8 +14,8 @@ void getNext(const String &T, std::vector<int> &next) {
     }
 }
 
-template <typename Callback, typename String = std::string>
-void match(const String &T, const String &S, Callback const &callback) {
+template <typename Callback, typename string = std::string>
+void match(const string &T, const string &S, Callback const &callback) {
     std::vector<int> next;
     getNext(T, next);
 
@@ -29,8 +29,8 @@ void match(const String &T, const String &S, Callback const &callback) {
 }
 
 int main() {
-    std::vector<int> S, T;
     std::ios::sync_with_stdio(false);
+    std::vector<int> S, T;
     int Tcas, n, m;
     std::cin >> Tcas;
     for (int cas = 1; cas <= Tcas; cas++) {

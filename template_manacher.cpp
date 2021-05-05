@@ -1,13 +1,13 @@
 #include <algorithm>
-#include <iostream>
 #include <string>
 #include <vector>
+#include <iostream>
 
-template <const char BEG = '@', const char END = 0, const char INS = '.', typename String = std::string>
-void manacher(const String &str, std::vector<int> &r) {
+template <const char BEG = '@', const char END = 0, const char INS = '.', typename string = std::string>
+void manacher(const string &str, std::vector<int> &r) {
     int length = 2 * str.size() + 3;
 
-    String s(length, 0);
+    string s(length, 0);
     s[0] = BEG, s[1] = INS, s[length - 1] = END;
     for (int i = 0; i < (int)str.size(); i++) {
         s[2 * (i + 1) + 0] = str[i];
@@ -33,10 +33,11 @@ void manacher(const String &str, std::vector<int> &r) {
 }
 
 int main() {
+    std::ios::sync_with_stdio(false);
     std::string str;
     while (std::cin >> str) {
         std::vector<int> r;
-        Manacher(str, r);
+        manacher(str, r);
         std::cout << *std::max_element(r.begin(), r.end()) << std::endl;
     }
     return 0;

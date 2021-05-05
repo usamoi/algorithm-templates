@@ -1,16 +1,15 @@
 #include <algorithm>
-#include <cmath>
-#include <cstdio>
-#include <iostream>
 #include <vector>
+#include <cmath>
+#include <iostream>
 
 struct ST {
     std::vector<std::vector<int>> table;
-    ST(const std::vector<int> &ori) {
-        int n = ori.size(), K = log(n) / log(2) + 1;
-        table.resize(K, std::vector<int>(n)), table[0] = ori;
+    void initial(const std::vector<int> &ori) {
+        int n = ori.size(), height = log(n) / log(2) + 1;
+        table.resize(height, std::vector<int>(n)), table[0] = ori;
 
-        for (int k = 1; k < K; k++)
+        for (int k = 1; k < height; k++)
             for (int i = 0; i + (1 << k) <= n; i++)
                 table[k][i] = std::max(table[k - 1][i], table[k - 1][i + (1 << (k - 1))]);
     }
@@ -22,12 +21,13 @@ struct ST {
 
 int main() {
     std::ios::sync_with_stdio(false);
+    ST st;
     int n, Q;
     std::cin >> n >> Q;
     std::vector<int> ori;
     for (int i = 0, x; i < n; i++)
         std::cin >> x, ori.push_back(x);
-    auto st = ST(ori);
+    st.initial(ori);
     while (Q--) {
         int l, r;
         std::cin >> l >> r, l--, r--;
