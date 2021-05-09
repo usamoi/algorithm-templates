@@ -2,20 +2,17 @@
 #include <iostream>
 
 namespace Splay {
+    typedef long long ll;
     struct Node {
-        int data, cnt = 0;
+        ll value;
+        int cnt = 0, size;
         Node *fa = nullptr, *ch[2] = {};
-
-        int size;
         void pushup() {
             size = cnt + (ch[0] ? ch[0]->size : 0) + (ch[1] ? ch[1]->size : 0);
         }
-
-        Node(int _data) {
-            data = _data;
+        Node(ll value) : value(value) {
             pushup();
         }
-
         int type() {
             return fa ? (fa->ch[0] == this ? 0 : 1) : -1;
         }
@@ -28,10 +25,8 @@ namespace Splay {
         }
         void rotate() {
             Node *fa = this->fa;
-
             if (!fa)
                 return;
-
             int d = type();
             adopt(fa->fa, this, fa->type());
             adopt(fa, ch[d ^ 1], d);
@@ -49,7 +44,7 @@ namespace Splay {
         }
     };
 
-    struct Splay {
+    struct Set {
         void splay(Node *x) {
             if (x) {
                 x->splay();
@@ -57,91 +52,75 @@ namespace Splay {
             }
         }
         Node *root = nullptr;
-        std::pair<bool, Node *> search(int data) {
+        std::pair<bool, Node *> search(ll value) {
             Node *last = nullptr, *x = root;
-
             while (x) {
-                if (data == x->data)
+                if (value == x->value)
                     return std::make_pair(true, x);
-
-                x = (last = x)->ch[data < x->data ? 0 : 1];
+                x = (last = x)->ch[value < x->value ? 0 : 1];
             }
-
             return std::make_pair(false, last);
         }
-        Node *insert(int data) {
-            auto f = search(data);
-
+        Node *insert(int value) {
+            auto f = search(value);
             if (f.first) {
                 splay(f.second);
             }
-
             if (!f.first && root) {
-                Node *x = new Node(data);
-                Node::adopt(f.second, x, data < f.second->data ? 0 : 1);
+                Node *x = new Node(value);
+                Node::adopt(f.second, x, value < f.second->value ? 0 : 1);
                 splay(x);
             }
-
             if (!f.first && !root) {
-                root = new Node(data);
+                root = new Node(value);
             }
-
-            root->cnt++;
-            root->pushup();
+            root->cnt++, root->pushup();
             return root;
         }
-        bool find(int data) {
-            auto f = search(data);
+        bool find(int value) {
+            auto f = search(value);
             splay(f.second);
             return f.first;
         }
         Node *findkth(int kth) {
-            if (!(1 <= kth && kth <= root->size)) {
+            Node *x = root;
+            if (!(1 <= kth && kth <= x->size)) {
                 return nullptr;
             }
-
-            Node *x = root;
             while (true) {
                 int left = x->ch[0] ? x->ch[0]->size : 0;
-
                 if (kth <= left) {
                     x = x->ch[0];
                     continue;
                 }
-
                 kth -= left;
                 int mid = x->cnt;
-
                 if (kth <= mid) {
                     splay(x);
                     return x;
                 }
-
                 kth -= mid;
                 x = x->ch[1];
             }
         }
-        int countleft(int data) {
+        int countleft(int value) {
             if (!root)
                 return 0;
-
-            find(data);
+            find(value);
             int ans = 0;
             ans += root->ch[0] ? root->ch[0]->size : 0;
-            ans += data > root->data ? root->cnt : 0;
+            ans += value > root->value ? root->cnt : 0;
             return ans;
         }
-        Node *findextre(Node *x, int d) {
+        static Node *findextre(Node *x, int d) {
             if (!x)
                 return 0;
-
             while (x->ch[d])
                 x = x->ch[d];
-
             return x;
         }
-        bool remove(int data) {
-            if (!find(data))
+        bool erase(int value) {
+            if (!find(value))
                 return false;
 
             root->cnt--;
@@ -179,7 +158,7 @@ namespace Splay {
 int main() {
     std::ios::sync_with_stdio(false);
     int n, opt, x;
-    Splay::Splay S;
+    Splay::Set S;
     std::cin >> n;
 
     while (n--) {
@@ -191,7 +170,7 @@ int main() {
             break;
 
         case 2:
-            S.remove(x);
+            S.erase(x);
             break;
 
         case 3:
@@ -199,31 +178,27 @@ int main() {
             break;
 
         case 4:
-            std::cout << S.findkth(x)->data << std::endl;
+            std::cout << S.findkth(x)->value << std::endl;
             break;
 
         case 5:
             S.find(x);
-
-            if (S.root->data < x)
-                std::cout << S.root->data << std::endl;
+            if (S.root->value < x)
+                std::cout << S.root->value << std::endl;
             else {
                 Splay::Node *ans = S.findextre(S.root->ch[0], 1);
-                std::cout << ans->data << std::endl;
+                std::cout << ans->value << std::endl;
             }
-
             break;
 
         case 6:
             S.find(x);
-
-            if (S.root->data > x)
-                std::cout << S.root->data << std::endl;
+            if (S.root->value > x)
+                std::cout << S.root->value << std::endl;
             else {
                 Splay::Node *ans = S.findextre(S.root->ch[1], 0);
-                std::cout << ans->data << std::endl;
+                std::cout << ans->value << std::endl;
             }
-
             break;
         }
     }

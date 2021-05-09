@@ -26,7 +26,7 @@ struct TreeDivide {
         E.push_back(Edge{u, v, w});
     }
     template <typename Fun>
-    void forEach (int u, Fun f) {
+    void travel(int u, Fun f) {
         for (auto index : V[u].to) {
             auto &e = E[index];
             if (V[e.v].solved || V[e.u].fa == e.v)
@@ -38,13 +38,12 @@ struct TreeDivide {
         if (V[u].fa == fa)
             return;
         V[u].fa = fa, V[u].heavyson = -1, V[u].sum = 1;
-        forEach (u, [&](Edge &e) {
+        travel(u, [&](Edge &e) {
             maintain(e.v, u);
             V[u].sum += V[e.v].sum;
             if (V[u].heavyson == -1 || V[V[u].heavyson].sum < V[e.v].sum)
                 V[u].heavyson = e.v;
-        })
-            ;
+        });
     }
     template <typename Callback>
     void divide(int u, Callback solve) {
@@ -52,10 +51,9 @@ struct TreeDivide {
         while (V[u].heavyson != -1 && V[V[u].heavyson].sum > vsize - V[u].sum && V[V[u].heavyson].sum > vsize / 2)
             u = V[u].heavyson;
         maintain(u, -1), solve(u), V[u].solved = true;
-        forEach (u, [&](Edge &e) {
+        travel(u, [&](Edge &e) {
             divide(e.v, solve);
-        })
-            ;
+        });
     }
     template <typename Callback>
     void divide(Callback solve) {
