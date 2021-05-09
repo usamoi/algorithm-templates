@@ -14,11 +14,9 @@ struct Dinic {
         int cur, level;
         std::vector<int> outs;
     };
-    int n;
     std::vector<Vertex> V;
     std::vector<Edge> E;
-    void initial(int tn) {
-        n = tn;
+    void initial(int n) {
         V.clear(), V.resize(1 + n);
         E.clear();
     }
@@ -27,9 +25,8 @@ struct Dinic {
         V[v].outs.push_back(E.size()), E.push_back(Edge{v, u, 0, 0});
     }
     bool dinicBfs(int s, int target) {
-        for (int i = 0; i <= n; i++)
-            V[i].cur = 0,
-            V[i].level = -1;
+        for (auto u : V)
+            u.cur = 0, u.level = -1;
         std::queue<int> q;
         V[s].level = 0, q.push(s);
         while (!q.empty()) {

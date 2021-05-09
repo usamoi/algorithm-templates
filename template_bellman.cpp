@@ -15,14 +15,12 @@ struct Bellman {
     struct Vertex {
         std::vector<int> e;
         ll d;
-        int reachEdgeCode;
+        int backEdge;
         int inq;
     };
     std::vector<Vertex> V;
     std::vector<Edge> E;
-    int n;
-    void initial(int tn) {
-        n = tn;
+    void initial(int n) {
         V.clear(), V.resize(1 + n);
         E.clear();
     }
@@ -31,10 +29,10 @@ struct Bellman {
         V[v].e.push_back(E.size()), E.push_back(Edge{v, u, 0, -cost, 0});
     }
     bool bfs(int s, int t) {
-        for (int i = 0; i <= n; i++) {
-            V[i].d = INF, V[i].inq = 0;
+        for (auto& u : V) {
+            u.d = INF, u.inq = 0;
         }
-        V[s].d = 0, V[s].reachEdgeCode = -1;
+        V[s].d = 0, V[s].backEdge = -1;
         std::queue<int> q;
         V[s].inq = 1, q.push(s);
         while (!q.empty()) {
@@ -46,7 +44,7 @@ struct Bellman {
                     continue;
                 if (V[e.v].d > e.cost + V[e.u].d) {
                     V[e.v].d = e.cost + V[e.u].d;
-                    V[e.v].reachEdgeCode = V[f].e[i];
+                    V[e.v].backEdge = V[f].e[i];
                     if (V[e.v].inq == 0) {
                         V[e.v].inq = 1, q.push(e.v);
                     }
@@ -59,9 +57,9 @@ struct Bellman {
         flow = 0, cost = 0;
         while (bfs(s, t)) {
             ll limit = INF;
-            for (int loc = V[t].reachEdgeCode; loc != -1; loc = V[E[loc].u].reachEdgeCode)
+            for (int loc = V[t].backEdge; loc != -1; loc = V[E[loc].u].backEdge)
                 limit = std::min(limit, E[loc].cap - E[loc].flow);
-            for (int loc = V[t].reachEdgeCode; loc != -1; loc = V[E[loc].u].reachEdgeCode)
+            for (int loc = V[t].backEdge; loc != -1; loc = V[E[loc].u].backEdge)
                 E[loc].flow += limit, E[1 ^ loc].flow -= limit, cost += limit * E[loc].cost;
             flow += limit;
         }
