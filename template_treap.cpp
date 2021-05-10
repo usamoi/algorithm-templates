@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-namespace Chairman {
+namespace Treap {
     typedef long long ll;
     struct Node;
     typedef const Node *Imp;
@@ -95,7 +95,7 @@ namespace Chairman {
             }
             return merge(merge(s.first, n), o.second);
         }
-        ImmutSet findkth(ImmutSet root, int kth) {
+        ImmutSet atrank(ImmutSet root, int kth) {
             ImmutSet x = root;
             if (!(1 <= kth && kth <= x->size)) {
                 return nullptr;
@@ -116,13 +116,13 @@ namespace Chairman {
             }
         }
     }; // namespace Set
-} // namespace Chairman
+} // namespace Treap
 
 int main() {
     std::ios::sync_with_stdio(false);
     int n, opt, ver;
-    Chairman::ll val;
-    std::vector<Chairman::Set::ImmutSet> history(1);
+    Treap::ll val;
+    std::vector<Treap::Set::ImmutSet> history(1);
 
     std::cin >> n;
     for (int cas = 1; cas <= n; cas++) {
@@ -131,32 +131,32 @@ int main() {
         auto S = history[ver];
         switch (opt) {
         case 1:
-            S = Chairman::Set::insert(S, val);
+            S = Treap::Set::insert(S, val);
             break;
 
         case 2:
-            S = Chairman::Set::erase(S, val);
+            S = Treap::Set::erase(S, val);
             break;
 
         case 3: {
-            auto o = Chairman::split(S, val - 1);
+            auto o = Treap::split(S, val - 1);
             int ans = (o.first ? o.first->size : 0) + 1;
             std::cout << ans << std::endl;
         } break;
 
         case 4:
-            std::cout << Chairman::Set::findkth(S, val)->value << std::endl;
+            std::cout << Treap::Set::atrank(S, val)->value << std::endl;
             break;
 
         case 5: {
-            auto o = Chairman::split(S, val - 1).first;
+            auto o = Treap::split(S, val - 1).first;
             while (o->R)
                 o = o->R;
             std::cout << o->value << std::endl;
         } break;
 
         case 6: {
-            auto o = Chairman::split(S, val).second;
+            auto o = Treap::split(S, val).second;
             while (o->L)
                 o = o->L;
             std::cout << o->value << std::endl;

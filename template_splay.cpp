@@ -82,7 +82,7 @@ namespace Splay {
             splay(f.second);
             return f.first;
         }
-        Node *findkth(int kth) {
+        Node *atrank(int kth) {
             Node *x = root;
             if (!(1 <= kth && kth <= x->size)) {
                 return nullptr;
@@ -178,7 +178,7 @@ int main() {
             break;
 
         case 4:
-            std::cout << S.findkth(x)->value << std::endl;
+            std::cout << S.atrank(x)->value << std::endl;
             break;
 
         case 5:
