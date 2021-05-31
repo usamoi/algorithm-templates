@@ -65,7 +65,7 @@ namespace NTT {
         return a;
     }
 
-} // namespace NTT
+}
 
 int main() {
     int n, m;

@@ -115,8 +115,8 @@ namespace Treap {
                 x = x->R;
             }
         }
-    }; // namespace Set
-} // namespace Treap
+    }
+}
 
 int main() {
     std::ios::sync_with_stdio(false);

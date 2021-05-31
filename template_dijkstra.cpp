@@ -25,7 +25,7 @@ struct Dijkstra {
         E.push_back(Edge{u, v, w});
     }
     ll dijkstra(int S, int T, ll pe) {
-        for(auto& u : V){
+        for (auto &u : V) {
             u.d = INF;
         }
         typedef std::pair<ll, int> Node;

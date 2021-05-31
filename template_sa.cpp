@@ -83,7 +83,7 @@ namespace SA {
             ht[rk[i]] = k;
         }
     }
-} // namespace SA
+}
 
 int main() {
     SA::Vec a, sa, rk, ht;

@@ -1,7 +1,7 @@
 #include <algorithm>
-#include <vector>
 #include <cmath>
 #include <iostream>
+#include <vector>
 
 struct ST {
     std::vector<std::vector<int>> table;

@@ -152,7 +152,7 @@ namespace Linca {
         v->pathparent = 0;
     }
     typedef std::vector<Node> Linca;
-}; // namespace Linca
+}
 
 int main() {
     int n, m;

@@ -49,7 +49,7 @@ namespace FFT {
             res[i] = a[i].real();
         return res;
     }
-} // namespace FFT
+}
 
 int main() {
     int n, m;

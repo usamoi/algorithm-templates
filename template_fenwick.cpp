@@ -4,7 +4,7 @@
 
 struct Fenwick {
     typedef long long ll;
-    
+
     static int lowbit(int x) {
         return x & -x;
     }

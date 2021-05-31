@@ -1,7 +1,7 @@
 #include <algorithm>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 
 template <const char BEG = '@', const char END = 0, const char INS = '.', typename string = std::string>
 void manacher(const string &str, std::vector<int> &r) {

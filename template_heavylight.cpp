@@ -1,6 +1,6 @@
 #include <algorithm>
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
 #include <vector>
 
 namespace Healight {
@@ -48,7 +48,7 @@ namespace Healight {
     }
 
     typedef std::vector<Node> Healight;
-} // namespace Healight
+}
 
 int main() {
     int N, M, S, x, y;

@@ -29,7 +29,7 @@ struct Bellman {
         V[v].e.push_back(E.size()), E.push_back(Edge{v, u, 0, -cost, 0});
     }
     bool bfs(int s, int t) {
-        for (auto& u : V) {
+        for (auto &u : V) {
             u.d = INF, u.inq = 0;
         }
         V[s].d = 0, V[s].backEdge = -1;

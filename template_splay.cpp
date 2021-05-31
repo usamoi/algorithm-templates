@@ -153,7 +153,7 @@ namespace Splay {
             return true;
         }
     };
-}; // namespace Splay
+}
 
 int main() {
     std::ios::sync_with_stdio(false);
