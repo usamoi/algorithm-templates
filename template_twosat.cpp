@@ -4,20 +4,21 @@
 #include <vector>
 
 struct TwoSat {
+    int n, dfsclock, scccnt;
     struct Vertex {
         std::vector<int> e;
-        int index, lowlink, sccno;
+        int index = 0, lowlink, sccno;
     };
     struct Edge {
         int u, v;
     };
     std::vector<Vertex> V;
     std::vector<Edge> E;
-    int n, dfsclock, scccnt;
     void initial(int _n) {
         n = _n;
         V.clear(), V.resize(2 * n);
         E.clear();
+        dfsclock = 0, scccnt = 0;
     }
     void addEdge(int u, int v) {
         V[u].e.push_back(E.size()), E.push_back(Edge{u, v});
@@ -45,17 +46,11 @@ struct TwoSat {
                 break;
         }
     }
-    void tarjan() {
-        dfsclock = 0, scccnt = 0;
+    std::vector<int> solve() {
         std::stack<int> s;
-        for (auto &u : V)
-            u.index = 0, u.lowlink = 0;
-        for (int i = 0; i < (int)V.size(); i++)
+        for (int i = 0; i < 2 * n; i++)
             if (!V[i].index)
                 tarjanDfs(s, i);
-    }
-    std::vector<int> solve() {
-        tarjan();
         std::vector<int> ans;
         for (int x = 0; x < n; x++)
             if (V[2 * x + 0].sccno == V[2 * x + 1].sccno)

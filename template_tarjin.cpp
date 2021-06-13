@@ -6,7 +6,7 @@ struct Tarjin {
     int n, dfsclock, scccnt;
     struct Vertex {
         std::vector<int> e;
-        int index, lowlink, sccno;
+        int index = 0, lowlink, sccno;
     };
     struct Edge {
         int u, v;
@@ -17,6 +17,7 @@ struct Tarjin {
         n = _n;
         V.clear(), V.resize(1 + n);
         E.clear();
+        dfsclock = 0, scccnt = 0;
     }
     void addEdge(int u, int v) {
         V[u].e.push_back(E.size()), E.push_back(Edge{u, v});
@@ -36,20 +37,20 @@ struct Tarjin {
         if (V[u].lowlink != V[u].index)
             return;
         int sccno = ++scccnt;
-        while (s.size() && s.top() != u) {
+        while (true) {
             int v = s.top();
             s.pop();
             V[v].sccno = sccno;
+            if (u == v)
+                break;
         }
     }
     void tarjan() {
-        dfsclock = 0, scccnt = 0;
         std::stack<int> s;
-        for (int i = 0; i < (int)V.size(); i++)
-            V[i].index = 0;
-        for (int i = 0; i < (int)V.size(); i++)
-            if (!V[i].index)
+        for (int i = 1; i <= n; i++)
+            if (!V[i].index) {
                 tarjanDfs(s, i);
+            }
     }
 } g;
 
