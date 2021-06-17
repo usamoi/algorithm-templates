@@ -24,7 +24,7 @@ struct Dijkstra {
         V[u].to.push_back(E.size());
         E.push_back(Edge{u, v, w});
     }
-    ll dijkstra(int S, int T, ll pe) {
+    ll dijkstra(int S, int T) {
         for (auto &u : V) {
             u.d = INF;
         }
