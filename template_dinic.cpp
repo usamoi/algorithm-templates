@@ -8,7 +8,7 @@ struct Dinic {
     static const ll INF = 1LL << 32;
     struct Edge {
         int u, v;
-        ll cap, flow;
+        ll cap, flow = 0;
     };
     struct Vertex {
         int cur, level;
@@ -25,7 +25,7 @@ struct Dinic {
         V[v].outs.push_back(E.size()), E.push_back(Edge{v, u, 0, 0});
     }
     bool dinicBfs(int s, int target) {
-        for (auto u : V)
+        for (auto &u : V)
             u.cur = 0, u.level = -1;
         std::queue<int> q;
         V[s].level = 0, q.push(s);
@@ -61,3 +61,19 @@ struct Dinic {
         return ans;
     }
 };
+
+int main() {
+    typedef Dinic::ll ll;
+    Dinic g;
+    int s, t;
+    Dinic::ll n, m;
+    std::cin >> n >> m >> s >> t;
+    g.initial(n);
+    for (ll i = 0; i < m; i++) {
+        ll u, v, c;
+        std::cin >> u >> v >> c;
+        g.addEdge(u, v, c);
+    }
+    std::cout << g.dinic(s, t) << std::endl;
+    return 0;
+}
