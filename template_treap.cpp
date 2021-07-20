@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <array>
 #include <cstdio>
 #include <iostream>
 #include <vector>
@@ -45,21 +44,42 @@ namespace Treap {
     };
     template <Poset po = le>
     std::pair<Pointer, Pointer> split(Pointer u, ll x) {
-        if (u == nullptr) {
+        if (u == nullptr)
             return std::make_pair(nullptr, nullptr);
+        auto n = u->clone();
+        if (po == le ? u->value < x : u->value <= x) {
+            auto o = split<po>(u->R, x);
+            n->R = o.first;
+            n->pushup();
+            return std::make_pair(n, o.second);
         } else {
-            auto n = u->clone();
-            if (po == le ? u->value < x : u->value <= x) {
-                auto o = split<po>(u->R, x);
-                n->R = o.first;
-                n->pushup();
-                return std::make_pair(n, o.second);
-            } else {
-                auto o = split<po>(u->L, x);
-                n->L = o.second;
-                n->pushup();
-                return std::make_pair(o.first, n);
-            }
+            auto o = split<po>(u->L, x);
+            n->L = o.second;
+            n->pushup();
+            return std::make_pair(o.first, n);
+        }
+    }
+    struct TP {
+        Pointer first, second, third;
+    };
+    TP isolate(Pointer u, ll x) {
+        if (u == nullptr)
+            return TP{nullptr, nullptr, nullptr};
+        auto n = u->clone();
+        if (u->value == x) {
+            n->L = n->R = nullptr, n->pushup();
+            return TP{u->L, n, u->R};
+        }
+        if (u->value < x) {
+            auto o = isolate(u->R, x);
+            n->R = o.first;
+            n->pushup();
+            return TP{n, o.second, o.third};
+        } else {
+            auto o = isolate(u->L, x);
+            n->L = o.third;
+            n->pushup();
+            return TP{o.first, o.second, n};
         }
     }
     Pointer merge(Pointer u, Pointer v) {
@@ -96,16 +116,13 @@ namespace Treap {
             return n;
         }
         Pointer erase(Pointer root, ll value) {
-            auto o = split<leq>(root, value);
-            auto s = split<le>(o.first, value);
-            Node *n;
-            if (s.second && s.second->cnt > 1) {
-                n = s.second->clone();
+            auto o = isolate(root, value);
+            if (!o.second)
+                return root;
+            auto n = o.second->cnt > 1 ? o.second->clone() : nullptr;
+            if (n)
                 n->cnt--, n->pushup();
-            } else {
-                n = nullptr;
-            }
-            return merge(merge(s.first, n), o.second);
+            return merge(merge(o.first, n), o.third);
         }
         int rankof(Pointer root, ll value) {
             auto o = split(root, value);
