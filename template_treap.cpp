@@ -1,49 +1,68 @@
 #include <algorithm>
+#include <array>
 #include <cstdio>
-#include <cstdlib>
 #include <iostream>
 #include <vector>
 
 namespace Treap {
-    typedef long long ll;
+    typedef int ll;
     struct Node;
-    typedef const Node *Imp;
+    typedef const Node *Pointer;
+    namespace Pool {
+        const int RESERVE = 2e7;
+        std::vector<Node> pool;
+        void initial() {
+            pool.reserve(RESERVE);
+        }
+    }
     struct Node {
         ll value;
         int cnt = 0, size, weight;
-        Imp L = nullptr, R = nullptr;
+        Pointer L = nullptr, R = nullptr;
         void pushup() {
-            size = cnt + (L ? L->size : 0) + (R ? R->size : 0);
+            size = cnt;
+            if (L)
+                size += L->size;
+            if (R)
+                size += R->size;
         }
+        Node() {}
         Node(ll value) : value(value) {
             weight = rand();
             pushup();
         }
+        Node *alloc() const {
+            Pool::pool.push_back(*this);
+            return &Pool::pool.back();
+        }
         Node *clone() const {
-            auto n = (Node *)::operator new(sizeof(Node));
-            *n = *this;
-            return n;
+            return this->alloc();
         }
     };
-    std::pair<Imp, Imp> split(Imp u, ll x) {
+    enum Poset {
+        le = 0,
+        leq = 1
+    };
+    template <Poset po = le>
+    std::pair<Pointer, Pointer> split(Pointer u, ll x) {
         if (u == nullptr) {
             return std::make_pair(nullptr, nullptr);
         } else {
             auto n = u->clone();
-            if (x < u->value) {
-                auto o = split(u->L, x);
-                n->L = o.second;
-                n->pushup();
-                return std::make_pair(o.first, n);
-            } else {
-                auto o = split(u->R, x);
+            if (po == le ? u->value < x : u->value <= x) {
+                auto o = split<po>(u->R, x);
                 n->R = o.first;
                 n->pushup();
                 return std::make_pair(n, o.second);
+            } else {
+                auto o = split<po>(u->L, x);
+                n->L = o.second;
+                n->pushup();
+                return std::make_pair(o.first, n);
             }
         }
     }
-    Imp merge(Imp u, Imp v) {
+    Pointer merge(Pointer u, Pointer v) {
         if (!(u && v)) {
             return u ? u : v;
         }
@@ -60,109 +79,96 @@ namespace Treap {
         }
     }
     namespace Set {
-        typedef Imp ImmutSet;
-        ImmutSet find(ImmutSet u, ll x) {
+        Pointer find(Pointer u, ll x) {
             while (u && x != u->value) {
                 u = x < u->value ? u->L : u->R;
             }
             return u;
         }
-        ImmutSet insert(ImmutSet root, ll value) {
-            auto o = split(root, value);
-            auto s = split(o.first, value - 1);
-            Node *n;
-            if (s.second) {
-                n = s.second->clone();
-            } else {
-                n = new Node(value);
-            }
-            n->cnt++, n->pushup();
-            return merge(merge(s.first, n), o.second);
+        Pointer insert(Pointer root, ll value) {
+            auto n = root ? root->clone() : Node(value).alloc();
+            if (root == nullptr || value == root->value)
+                n->cnt++, n->pushup();
+            else if (value < root->value)
+                n->L = insert(root->L, value), n->pushup();
+            else
+                n->R = insert(root->R, value), n->pushup();
+            return n;
         }
-        ImmutSet erase(ImmutSet root, ll value) {
-            auto o = split(root, value);
-            auto s = split(o.first, value - 1);
+        Pointer erase(Pointer root, ll value) {
+            auto o = split<leq>(root, value);
+            auto s = split<le>(o.first, value);
             Node *n;
-            if (s.second) {
+            if (s.second && s.second->cnt > 1) {
                 n = s.second->clone();
                 n->cnt--, n->pushup();
-                if (n->cnt == 0) {
-                    delete n;
-                    n = nullptr;
-                }
             } else {
                 n = nullptr;
             }
             return merge(merge(s.first, n), o.second);
         }
-        ImmutSet atrank(ImmutSet root, int kth) {
-            ImmutSet x = root;
-            if (!(1 <= kth && kth <= x->size)) {
+        int rankof(Pointer root, ll value) {
+            auto o = split(root, value);
+            return (o.first ? o.first->size : 0) + 1;
+        }
+        Pointer placeof(Pointer root, int kth) {
+            if (kth < 1 || root->size < kth)
                 return nullptr;
-            }
-            while (true) {
-                int left = x->L ? x->L->size : 0;
+            for (auto x = root;;) {
+                int left = x->L ? x->L->size : 0, mid = x->cnt;
                 if (kth <= left) {
                     x = x->L;
                     continue;
                 }
-                kth -= left;
-                int mid = x->cnt;
-                if (kth <= mid) {
+                if (kth <= left + mid) {
                     return x;
                 }
-                kth -= mid;
-                x = x->R;
+                kth -= left + mid, x = x->R;
             }
+        }
+        Pointer pre(Pointer root, ll value) {
+            if (!root)
+                return nullptr;
+            if (root->value < value) {
+                auto r = pre(root->R, value);
+                return r ? r : root;
+            }
+            return pre(root->L, value);
+        }
+        Pointer suc(Pointer root, ll value) {
+            if (!root)
+                return nullptr;
+            if (root->value > value) {
+                auto r = suc(root->L, value);
+                return r ? r : root;
+            }
+            return suc(root->R, value);
         }
     }
 }
 
 int main() {
+    Treap::Pool::initial();
     std::ios::sync_with_stdio(false);
     int n, opt, ver;
     Treap::ll val;
-    std::vector<Treap::Set::ImmutSet> history(1);
-
+    std::vector<Treap::Pointer> history(1);
     std::cin >> n;
     for (int cas = 1; cas <= n; cas++) {
         std::cin >> ver >> opt >> val;
-
         auto S = history[ver];
-        switch (opt) {
-        case 1:
+        if (opt == 1)
             S = Treap::Set::insert(S, val);
-            break;
-
-        case 2:
+        if (opt == 2)
             S = Treap::Set::erase(S, val);
-            break;
-
-        case 3: {
-            auto o = Treap::split(S, val - 1);
-            int ans = (o.first ? o.first->size : 0) + 1;
-            std::cout << ans << std::endl;
-        } break;
-
-        case 4:
-            std::cout << Treap::Set::atrank(S, val)->value << std::endl;
-            break;
-
-        case 5: {
-            auto o = Treap::split(S, val - 1).first;
-            while (o->R)
-                o = o->R;
-            std::cout << o->value << std::endl;
-        } break;
-
-        case 6: {
-            auto o = Treap::split(S, val).second;
-            while (o->L)
-                o = o->L;
-            std::cout << o->value << std::endl;
-        } break;
-        }
-
+        if (opt == 3)
+            std::cout << Treap::Set::rankof(S, val) << std::endl;
+        if (opt == 4)
+            std::cout << Treap::Set::placeof(S, val)->value << std::endl;
+        if (opt == 5)
+            std::cout << Treap::Set::pre(S, val)->value << std::endl;
+        if (opt == 6)
+            std::cout << Treap::Set::suc(S, val)->value << std::endl;
         history.push_back(S);
     }
 }
