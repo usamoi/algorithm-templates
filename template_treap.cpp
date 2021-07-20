@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <cstdio>
 #include <iostream>
 #include <vector>
 
@@ -59,29 +58,6 @@ namespace Treap {
             return std::make_pair(o.first, n);
         }
     }
-    struct TP {
-        Pointer first, second, third;
-    };
-    TP isolate(Pointer u, ll x) {
-        if (u == nullptr)
-            return TP{nullptr, nullptr, nullptr};
-        auto n = u->clone();
-        if (u->value == x) {
-            n->L = n->R = nullptr, n->pushup();
-            return TP{u->L, n, u->R};
-        }
-        if (u->value < x) {
-            auto o = isolate(u->R, x);
-            n->R = o.first;
-            n->pushup();
-            return TP{n, o.second, o.third};
-        } else {
-            auto o = isolate(u->L, x);
-            n->L = o.third;
-            n->pushup();
-            return TP{o.first, o.second, n};
-        }
-    }
     Pointer merge(Pointer u, Pointer v) {
         if (!(u && v)) {
             return u ? u : v;
@@ -116,13 +92,18 @@ namespace Treap {
             return n;
         }
         Pointer erase(Pointer root, ll value) {
-            auto o = isolate(root, value);
-            if (!o.second)
-                return root;
-            auto n = o.second->cnt > 1 ? o.second->clone() : nullptr;
-            if (n)
+            if (root == nullptr)
+                return nullptr;
+            if (value == root->value && root->cnt == 1)
+                return merge(root->L, root->R);
+            auto n = root->clone();
+            if (value == root->value && root->cnt > 1)
                 n->cnt--, n->pushup();
-            return merge(merge(o.first, n), o.third);
+            else if (value < root->value)
+                n->L = erase(root->L, value), n->pushup();
+            else
+                n->R = erase(root->R, value), n->pushup();
+            return n;
         }
         int rankof(Pointer root, ll value) {
             auto o = split(root, value);
