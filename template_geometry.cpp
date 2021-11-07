@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <queue>
 #include <stack>
+#include <set>
 #include <vector>
 
 const double EPS = 1e-8;
@@ -101,6 +102,35 @@ void androw(std::vector<Point> &s) {
         ans.push_back(s[i]);
     }
     s = std::move(ans);
+}
+
+std::optional<Polygon> sai(std::vector<Line> &e) {
+    std::sort(e.begin(), e.end(), [](const Line &x, const Line &y) {
+        double xa = x.second.angle(), ya = y.second.angle();
+        return dcmp(xa - ya) ? xa < ya : onLine(x.first, y) == 1;
+    });
+    std::deque<std::pair<Line, Point>> q;
+    q.push_back(std::make_pair(e[0], Point{}));
+    for (int i = 1; i < (int)e.size(); i++) {
+        if (!dcmp(e[i].second.angle() - e[i - 1].second.angle()))
+            continue;
+        while (q.size() > 1 && onLine(q.back().second, e[i]) == -1)
+            q.pop_back();
+        while (q.size() > 1 && onLine(q[1].second, e[i]) == -1)
+            q.pop_front();
+        q.push_back(std::make_pair(e[i], intersection(e[i], q.back().first)));
+    }
+    while (q.size() > 1 && onLine(q.back().second, q.front().first) == -1)
+        q.pop_back();
+    q.front().second = intersection(q.front().first, q.back().first);
+    if (q.size() <= 2) {
+        return std::nullopt;
+    } else {
+        Polygon polygon;
+        for (const auto &[_, v] : q)
+            polygon.push_back(v);
+        return polygon;
+    }
 }
 
 int main() {
