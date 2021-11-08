@@ -1,37 +1,37 @@
 #include <algorithm>
 #include <cmath>
-#include <iostream>
+#include <cstdio>
 #include <vector>
 
 struct ST {
-    std::vector<std::vector<int>> table;
-    void initial(const std::vector<int> &ori) {
-        int n = ori.size(), height = log(n) / log(2) + 1;
-        table.resize(height, std::vector<int>(n)), table[0] = ori;
-
+    typedef int ll;
+    std::vector<std::vector<ll>> t;
+    void initial(const std::vector<ll> &a) {
+        int height = std::log2(a.size()) + 1;
+        t = std::vector(height, std::vector<ll>(a.size())), t[0] = a;
         for (int k = 1; k < height; k++)
-            for (int i = 0; i + (1 << k) <= n; i++)
-                table[k][i] = std::max(table[k - 1][i], table[k - 1][i + (1 << (k - 1))]);
+            for (int i = 0; i + (1 << k) <= (int)a.size(); i++)
+                t[k][i] = std::max(t[k - 1][i], t[k - 1][i + (1 << (k - 1))]);
     }
-    int query(int l, int r) {
-        int k = log(r - l + 1) / log(2);
-        return std::max(table[k][l], table[k][r + 1 - (1 << k)]);
+    ll query(int l, int r) {
+        int k = std::log2(r - l + 1);
+        return std::max(t[k][l], t[k][r + 1 - (1 << k)]);
     }
 };
 
 int main() {
-    std::ios::sync_with_stdio(false);
+    int n, q;
+    scanf("%d%d", &n, &q);
+    std::vector<int> a;
+    for (int i = 0, x; i < n; i++) {
+        scanf("%d", &x);
+        a.push_back(x);
+    }
     ST st;
-    int n, Q;
-    std::cin >> n >> Q;
-    std::vector<int> ori;
-    for (int i = 0, x; i < n; i++)
-        std::cin >> x, ori.push_back(x);
-    st.initial(ori);
-    while (Q--) {
-        int l, r;
-        std::cin >> l >> r, l--, r--;
-        std::cout << st.query(l, r) << std::endl;
+    st.initial(a);
+    for (int i = 1, l, r; i <= q; i++) {
+        scanf("%d%d", &l, &r), l--, r--;
+        printf("%d\n", st.query(l, r));
     }
     return 0;
 }

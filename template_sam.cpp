@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <array>
 #include <iostream>
-#include <map>
 #include <string>
 #include <vector>
 
@@ -20,7 +19,6 @@ struct SAM {
     static const int MAXP = 2 * MAXL - 1;
     State pool[MAXP];
     int pool_size = 0;
-
     void initial() {
         pool_size = 0;
         start = last = new (&pool[pool_size++]) State{0, 0, nullptr};
@@ -45,7 +43,6 @@ struct SAM {
         }
         return last = cur;
     }
-
     void complete() {
         auto sort = std::vector<State *>(pool_size);
         for (int i = 0; i < pool_size; i++)

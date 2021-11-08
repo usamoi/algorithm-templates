@@ -1,44 +1,52 @@
 #include <algorithm>
-#include <cstdlib>
-#include <iostream>
+#include <cstdio>
 #include <vector>
 
-namespace Healight {
+struct Heavylight {
     struct Node {
-        std::vector<Node *> v;
+        std::vector<Node *> to;
         Node *son, *fa, *top;
-        int size, depth, code = 0;
-
-        void build(Node *tfa = nullptr) {
-            fa = tfa;
+        int size, depth, code;
+        void build(Node *_fa = nullptr) {
+            fa = _fa;
             depth = fa ? (fa->depth + 1) : 1;
             size = 1;
             son = 0;
-            for (auto node : v) {
-                if (node == fa)
+            for (auto v : to) {
+                if (v == fa)
                     continue;
-                node->build(this);
-                size += node->size;
-                if (son == 0 || node->size > son->size)
-                    son = node;
+                v->build(this);
+                size += v->size;
+                if (son == 0 || v->size > son->size)
+                    son = v;
             }
         }
-
-        void generate() {
-            static int dfs_clock = 0;
+        void generate(int &dfs_clock) {
             code = ++dfs_clock;
             top = fa && fa->son == this ? fa->top : this;
             if (son)
-                son->generate();
-            for (auto node : v) {
+                son->generate(dfs_clock);
+            for (auto node : to) {
                 if (node == fa || node == son)
                     continue;
-                node->generate();
+                node->generate(dfs_clock);
             }
         }
     };
-
-    Node *LCA(Node *x, Node *y) {
+    std::vector<Node> V;
+    void initial(int n) {
+        V.clear(), V.resize(1 + n);
+    }
+    void addEdge(int u, int v) {
+        V[u].to.push_back(&V[v]);
+        V[v].to.push_back(&V[u]);
+    }
+    void complete(int s) {
+        int dfs_clock = 0;
+        V[s].build();
+        V[s].generate(dfs_clock);
+    }
+    static Node *LCA(Node *x, Node *y) {
         while (x->top != y->top) {
             if (x->top->depth > y->top->depth)
                 std::swap(x, y);
@@ -46,24 +54,21 @@ namespace Healight {
         }
         return x->depth < y->depth ? x : y;
     }
-
-    typedef std::vector<Node> Healight;
-}
+};
 
 int main() {
-    int N, M, S, x, y;
-    std::cin >> N >> M >> S;
-    auto healight = Healight::Healight(1 + N);
-    for (int i = 1; i < N; i++) {
-        std::cin >> x >> y;
-        healight[x].v.push_back(&healight[y]);
-        healight[y].v.push_back(&healight[x]);
+    int n, m, s;
+    scanf("%d%d%d", &n, &m, &s);
+    Heavylight healight;
+    healight.initial(n);
+    for (int i = 1, u, v; i < n; i++) {
+        scanf("%d%d", &u, &v);
+        healight.addEdge(u, v);
     }
-    healight[S].build();
-    healight[S].generate();
-    for (int i = 1; i <= M; i++) {
-        std::cin >> x >> y;
-        std::cout << LCA(&healight[x], &healight[y]) - &healight[0] << std::endl;
+    healight.complete(s);
+    for (int i = 1, u, v; i <= m; i++) {
+        scanf("%d%d", &u, &v);
+        printf("%d\n", (int)(Heavylight::LCA(&healight.V[u], &healight.V[v]) - &healight.V[0]));
     }
     return 0;
 }

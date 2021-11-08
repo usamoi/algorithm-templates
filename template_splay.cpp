@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <iostream>
+#include <cstdio>
 
 namespace Splay {
     typedef long long ll;
@@ -105,7 +105,7 @@ namespace Splay {
             if (kth < 1 || root->size < kth)
                 return nullptr;
             for (auto x = root;;) {
-                int left = x->ch[0] ? x->ch[0]->size : 0, mid = x -> cnt;
+                int left = x->ch[0] ? x->ch[0]->size : 0, mid = x->cnt;
                 if (kth <= left) {
                     x = x->ch[0];
                     continue;
@@ -130,24 +130,27 @@ namespace Splay {
 }
 
 int main() {
-    std::ios::sync_with_stdio(false);
     int n, opt, x;
     Splay::Set S;
-    std::cin >> n;
-    while (n--) {
-        std::cin >> opt >> x;
+    scanf("%d", &n);
+    for (int cas = 1; cas <= n; cas++) {
+        scanf("%d%d", &opt, &x);
         if (opt == 1)
             S.insert(x);
         if (opt == 2)
             S.erase(x);
         if (opt == 3)
-            std::cout << S.rankof(x) << std::endl;
+            printf("%d\n", S.rankof(x));
         if (opt == 4)
-            std::cout << S.placeof(x)->value << std::endl;
-        if (opt == 5)
-            S.count(x), std::cout << (S.root->value < x ? S.root : S.root->ch[0]->extremum(1))->value << std::endl;
-        if (opt == 6)
-            S.count(x), std::cout << (S.root->value > x ? S.root : S.root->ch[1]->extremum(0))->value << std::endl;
+            printf("%lld\n", S.placeof(x)->value);
+        if (opt == 5) {
+            S.count(x);
+            printf("%lld\n", (S.root->value < x ? S.root : S.root->ch[0]->extremum(1))->value);
+        }
+        if (opt == 6) {
+            S.count(x);
+            printf("%lld\n", (S.root->value > x ? S.root : S.root->ch[1]->extremum(0))->value);
+        }
     }
     return 0;
 }

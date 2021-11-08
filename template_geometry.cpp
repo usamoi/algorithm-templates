@@ -132,7 +132,3 @@ std::optional<Polygon> sai(std::vector<Line> &e) {
         return polygon;
     }
 }
-
-int main() {
-    return 0;
-}

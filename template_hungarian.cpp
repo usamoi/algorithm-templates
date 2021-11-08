@@ -9,7 +9,7 @@
 
 struct Hungarian {
     typedef long long ll;
-    const ll INF = 1e12;
+    const ll INF = 1e12; // `static` makes the linker puzzled
     std::vector<std::vector<ll>> weights;
     int n;
     void initial(int _n) {

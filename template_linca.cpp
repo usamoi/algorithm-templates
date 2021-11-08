@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <iostream>
+#include <cstdio>
 #include <vector>
 
 namespace Linca {
@@ -140,21 +140,26 @@ namespace Linca {
         v->pathparent = nullptr;
     }
     typedef std::vector<Node> Linca;
+    void initial(Linca &linca, int n) {
+        linca.clear(), linca.resize(1 + n);
+    }
 }
 
 int main() {
     int n, m;
-    std::cin >> n >> m;
-    auto linca = Linca::Linca(1 + n);
+    scanf("%d%d", &n, &m);
+    Linca::Linca linca;
+    Linca::initial(linca, n);
     for (int i = 1, val; i <= n; i++) {
-        std::cin >> val;
+        scanf("%d", &val);
         linca[i] = Linca::Node(val);
     }
     while (m--) {
         int op, x, y;
-        std::cin >> op >> x >> y;
-        if (op == 0)
-            std::cout << Linca::query(&linca[x], &linca[y])->data << std::endl;
+        scanf("%d%d%d", &op, &x, &y);
+        if (op == 0) {
+            printf("%lld\n", Linca::query(&linca[x], &linca[y])->data);
+        }
         if (op == 1)
             if (!Linca::linked(&linca[x], &linca[y]))
                 Linca::link(&linca[x], &linca[y]);

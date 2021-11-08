@@ -1,10 +1,8 @@
-#include <cassert>
 #include <cstdio>
 #include <stack>
 #include <vector>
 
 struct TwoSat {
-    int n, dfsclock, scccnt;
     struct Vertex {
         std::vector<int> e;
         int index = 0, lowlink, sccno;
@@ -12,6 +10,7 @@ struct TwoSat {
     struct Edge {
         int u, v;
     };
+    int n, dfsclock, scccnt;
     std::vector<Vertex> V;
     std::vector<Edge> E;
     void initial(int _n) {

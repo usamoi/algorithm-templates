@@ -68,6 +68,7 @@ namespace NTT {
 }
 
 int main() {
+    std::ios::sync_with_stdio(false);
     int n, m;
     std::cin >> n >> m;
     std::vector<NTT::ll> a(n + 1), b(m + 1);

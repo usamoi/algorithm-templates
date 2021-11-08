@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <iostream>
 #include <queue>
 #include <string>
@@ -10,7 +11,8 @@ struct ACM {
         return c - 'a';
     }
     struct Node {
-        int ch[SIGMA] = {}, fail = 0;
+        int fail = 0;
+        std::array<int, SIGMA> ch = {};
     };
     std::vector<Node> V;
     std::vector<int> S;
@@ -51,12 +53,13 @@ struct ACM {
         }
     }
     template <typename Callback>
-    void query(const string &s, Callback const &callback) {
+    void query(const string &s, Callback callback) {
         int u = 0;
         for (auto c : s) {
             u = V[u].ch[encode(c)];
-            for (int v = u; v && callback(v); v = V[v].fail)
-                ;
+            int v = u;
+            while (v && callback(v))
+                v = V[v].fail;
         }
     }
 };

@@ -1,11 +1,11 @@
 #include <algorithm>
-#include <iostream>
+#include <cstdio>
 #include <queue>
 #include <vector>
 
 struct Dinic {
     typedef long long ll;
-    static const ll INF = 1LL << 32;
+    static const ll INF = 1e18;
     struct Edge {
         int u, v;
         ll cap, flow = 0;

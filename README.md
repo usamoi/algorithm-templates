@@ -1,2 +1,3 @@
-# algorithm-templates
-templates for algorithms
+# Algorithm Templates
+
+Algorithm templates for competitive programming.

@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <iostream>
+#include <cstdio>
 #include <vector>
 
 namespace Treap {
@@ -147,26 +147,25 @@ namespace Treap {
 
 int main() {
     Treap::Pool::initial();
-    std::ios::sync_with_stdio(false);
-    int n, opt, ver;
-    Treap::ll val;
     std::vector<Treap::Pointer> history(1);
-    std::cin >> n;
-    for (int cas = 1; cas <= n; cas++) {
-        std::cin >> ver >> opt >> val;
+    int n;
+    scanf("%d", &n);
+    for (int cas = 1, ver, opt; cas <= n; cas++) {
+        Treap::ll val;
+        scanf("%d%d%d", &ver, &opt, &val);
         auto S = history[ver];
         if (opt == 1)
             S = Treap::Set::insert(S, val);
         if (opt == 2)
             S = Treap::Set::erase(S, val);
         if (opt == 3)
-            std::cout << Treap::Set::rankof(S, val) << std::endl;
+            printf("%d\n", Treap::Set::rankof(S, val));
         if (opt == 4)
-            std::cout << Treap::Set::placeof(S, val)->value << std::endl;
+            printf("%d\n", Treap::Set::placeof(S, val)->value);
         if (opt == 5)
-            std::cout << Treap::Set::pre(S, val)->value << std::endl;
+            printf("%d\n", Treap::Set::pre(S, val)->value);
         if (opt == 6)
-            std::cout << Treap::Set::suc(S, val)->value << std::endl;
+            printf("%d\n", Treap::Set::suc(S, val)->value);
         history.push_back(S);
     }
 }

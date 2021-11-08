@@ -6,17 +6,14 @@
 template <const char BEG = '@', const char END = 0, const char INS = '.', typename string = std::string>
 void manacher(const string &str, std::vector<int> &r) {
     int length = 2 * str.size() + 3;
-
     string s(length, 0);
     s[0] = BEG, s[1] = INS, s[length - 1] = END;
     for (int i = 0; i < (int)str.size(); i++) {
         s[2 * (i + 1) + 0] = str[i];
         s[2 * (i + 1) + 1] = s[1];
     }
-
     r = std::vector<int>(length, 0);
     r[1] = 1, r[2] = 2;
-
     int mid = 2, maxright = 3;
     for (int i = 3; i < length - 1; i++) {
         r[i] = maxright < i ? 1 : std::min(r[mid * 2 - i], maxright - i);
