@@ -8,9 +8,9 @@
 #include <vector>
 
 namespace SA {
-    typedef std::vector<int> Vec;
+    using Vec = std::vector<int>;
     template <typename string = std::string>
-    Vec discrete(const string &str) {
+    Vec preprocess(const string &str) {
         int n = str.size();
         Vec s(1 + n);
         std::string charset = str;
@@ -20,7 +20,7 @@ namespace SA {
             s[i] = std::lower_bound(charset.begin(), charset.end(), str[i - 1]) - charset.begin() + 1;
         return s;
     }
-    std::pair<Vec, Vec> construct(const Vec &s) {
+    std::pair<Vec, Vec> make_sa(const Vec &s) {
         int n = s.size() - 1;
         Vec sa(1 + n), rk(1 + n);
         Vec fir(1 + n), sec(1 + n), tmp(1 + n), buc(1 + n);
@@ -65,7 +65,7 @@ namespace SA {
         }
         return std::make_pair(sa, rk);
     }
-    Vec getHeight(const Vec &s, const Vec &sa, const Vec &rk) {
+    Vec make_height(const Vec &s, const Vec &sa, const Vec &rk) {
         int n = s.size() - 1;
         Vec ht(1 + n);
         for (int i = 1, k = 0; i <= n; ++i) {
@@ -82,9 +82,9 @@ int main() {
     std::ios::sync_with_stdio(false);
     std::string str;
     std::cin >> str;
-    auto s = SA::discrete(str);
-    auto [sa, rk] = SA::construct(s);
-    auto ht = SA::getHeight(s, sa, rk);
+    auto s = SA::preprocess(str);
+    auto [sa, rk] = SA::make_sa(s);
+    auto ht = SA::make_height(s, sa, rk);
     for (int i = 1; i <= (int)str.size(); i++) {
         std::cout << "{ idx = " << i << ", sa = " << sa[i] << ", ht = " << ht[i] << " }" << std::endl;
     }
